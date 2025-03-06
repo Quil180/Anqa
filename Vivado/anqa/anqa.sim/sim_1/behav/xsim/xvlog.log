@@ -1,6 +1,0 @@
-INFO: [VRFC 10-2263] Analyzing Verilog file "/home/quil/Documents/Anqa/Vivado/anqa/anqa.srcs/sources_1/new/bit-adders.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module half_adder
-INFO: [VRFC 10-311] analyzing module full_adder
-INFO: [VRFC 10-311] analyzing module two_bit_adder
-INFO: [VRFC 10-2263] Analyzing Verilog file "/home/quil/Documents/Anqa/Vivado/anqa/anqa.srcs/sim_1/new/adders_sim.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module testbench

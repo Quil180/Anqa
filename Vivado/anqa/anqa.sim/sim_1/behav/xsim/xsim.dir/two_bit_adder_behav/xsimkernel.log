@@ -1,4 +1,0 @@
-Running: xsim.dir/two_bit_adder_behav/xsimk -simmode gui -wdb two_bit_adder_behav.wdb -simrunnum 0 -socket 56017
-Design successfully loaded
-Design Loading Memory Usage: 401708 KB (Peak: 401708 KB)
-Design Loading CPU Usage: 740 ms
