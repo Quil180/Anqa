@@ -5,7 +5,7 @@
 ## **Current Progress**  
 ✔ **RV32I ISA Documentation** – A breakdown of 36 instructions in my own words, including immediate operations, register-register operations, store/load instructions, and branching.  
 ✔ **Adder Design** – Implemented a hierarchical approach to building a **32-bit adder** using half adders, full adders, and scalable multi-bit adder structures.  
-✔ **Implementation Plan** – The processor will be developed in **Verilog using Vivado 2024.2**.  
+✔ **Implementation Plan** – The processor will be developed in **Verilog** using **Vivado 2024.2**.  
 
 ## **Next Steps**  
 🔹 **Designing the ALU** – Implementing arithmetic, logical, and branching operations.  
