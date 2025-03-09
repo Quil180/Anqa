@@ -170,7 +170,7 @@ The 'lbu' instruction is an instruction that loads an 8-bit value from memory (f
 \begin{figure}[!htbp]
     \centering
     \begin{verbatim}
-    lw destination-register,offset(rs1)
+    lbu destination-register,offset(rs1)
     \end{verbatim}
 \end{figure}\newline
 
@@ -296,17 +296,17 @@ The 'sh' instruction is an instruction that stores the least significant halfwor
 \begin{figure}[!htbp]
     \centering
     \begin{verbatim}
-    sw rs2,offset(rs1)
+    sh rs2,offset(rs1)
     \end{verbatim}
 \end{figure}\newline
 
 \subsubsection{Store Word}
 \qquad
-The 'sh' instruction is an instruction that stores the word (4 bytes or 32 bits) from the register rs2 to the memory address calculated by adding the sign-extended immediate known as offset below to the value of the register rs1. The assembly is as follows:
+The 'sw' instruction is an instruction that stores the word (4 bytes or 32 bits) from the register rs2 to the memory address calculated by adding the sign-extended immediate known as offset below to the value of the register rs1. The assembly is as follows:
 \begin{figure}[!htbp]
     \centering
     \begin{verbatim}
-    sh rs2,offset(rs1)
+    sw rs2,offset(rs1)
     \end{verbatim}
 \end{figure}\newline
 
@@ -353,7 +353,7 @@ The 'bge' instruction is an instruction that branches to the target address (tha
     \end{verbatim}
 \end{figure}\newline
 
-\subsubsection{Branch if Less That Unsigned}
+\subsubsection{Branch if Less Than Unsigned}
 \qquad
 The 'bltu' instruction is an instruction that branches to the target address (that being offset), if and only if the values in registers rs1 is less than rs2, with both values being treated as if they were unsigned integers. The assembly is as follows:
 \begin{figure}[!htbp]
@@ -408,10 +408,11 @@ The 'jal' instruction is an instruction that performs an unconditional (also kno
     jal destination-register,immediate-value
     \end{verbatim}
 \end{figure}\newline
-
+\\
+\newpage
 \subsubsection{Jump And Link Register}
 \qquad
-The 'jalr' instruction is an instruction that performs an unconditional (also known as immediate) jump to a target address that is calculated by adding a 12-bit sign-extended immediate, to the value in registter rs1. The least significant bit of the computed address is also cleared to ensure that it is aligned in the process. The address of the instruction following the jump (program counter + 4 bits) is then saved to the destination-register The address of the next instruction is then saved to the destination-register. The assembly is as follows:
+The 'jalr' instruction is an instruction that performs an unconditional (also known as immediate) jump to a target address that is calculated by adding a 12-bit sign-extended immediate, to the value in registter rs1. The least significant bit of the computed address is also cleared to ensure that it is aligned in the process. The address of the instruction following the jump (program counter + 4 bits) is then saved to the destination-register. The assembly is as follows:
 \begin{figure}[!htbp]
     \centering
     \begin{verbatim}
@@ -427,17 +428,17 @@ The 'jalr' instruction is an instruction that performs an unconditional (also kn
 First, to even design a CPU, alongside any real digital circuit, I first had to understand a basic adder, with our end goal being the 32-bit adder. However, to even understand a 32-bit adder, I first needed to understand the even simpler half adder.
 \subsection{Part 1A: The Half Adder}
 \qquad
-A half adder is simply just, well, a device that adds 2 bits, with the following properties of which are taken from the Discrete World:
+A half adder is simply just, well, a device that adds 2 bits and outputs its simple addition along with a carry bit incase of an overflow, that has the following properties of which are taken from the Discrete World:
 \begin{center}
     2-Bit Adder Properties
     \begin{displaymath}
     \begin{array}{|c c|c|}
-    Bit1 & Bit2 & Bit1 + Bit2\\
+    Bit1 & Bit2 & Sum\\
     \hline
     0 & 0 & 0\\
     0 & 1 & 1\\
     1 & 0 & 1\\
-    1 & 1 & 0\ Carry\ 1\\
+    1 & 1 & 10\\
     \end{array}
     \end{displaymath}
 \end{center}
@@ -446,20 +447,29 @@ As you can see, when you add 2 bits, there are 3 unique cases that can happen:
 \begin{enumerate}
       \item You get an output of 0.
       \item You get an output of 1.
-      \item You get an output of 0 but an overflow/carry of 1.
+      \item You get an output of 0 but an overflow of 1, as the output can only be 1 bit in length.
 \end{enumerate}
 
-And now... You may be wondering, how in the world do you convert that to simple circuits using something like ANDs and ORs and XORs and NOTs??? Well, let's think, what does the table itself look like? It looks like a gate that is ONLY true when either Bit1 or Bit2 is enabled...
-But what of the carry? Well, when is that enabled? It's only on when BOTH Bit1 and Bit2 are on, therefore isn't it literally just an AND gate? Therefore, wouldn't the circuit look something like this?
+And now you may be wondering, how in the world do you convert that to simple circuits using something like ANDs and ORs and XORs and NOTs??? Well, let's think, what does the table itself look like? 
+
+According to the table, the output bit is only true, if and only if, only one of the inputs is on/true, else it is 0. Now, when converted to discrete terms, we know that we have the following basic blocks of relations:
+\begin{enumerate}
+      \item The AND gate, of which only outputs a 1 if and only if all inputs are 1.
+      \item The OR gate, of which only outputs a 1 if at least one of the inputs are 1.
+      \item The XOR gate, of which only outputs a 1 if and only if only one input is 1, and not both.
+      \item The NOT gate, of which only outputs 1 if the input is 0, and a 0 if the input is 1.
+\end{enumerate}
+
+Now, the only option that aligns with the statement above on the half adder's truth table for its output, would have to be the XOR (The pointy one with a line out of its inputs) gate. But what of the carry? Well, when is that a 1? It's only 1 when BOTH Bit1 and Bit2 are on, therefore isn't it just the definition of an AND gate (The one that looks like an U shaded in)? And therefore, wouldn't the circuit look something like this?
 \begin{figure}[!htbp]
     \centering
     \caption{The Basic Half Adder Schematic as described in the paragraph above}
     \includegraphics[width=0.75\textwidth]{pictures/part1/basic_half_adder.png}
     \label{Basic 2-Bit Adder}
 \end{figure}
-
-And of which, at least when coded in Verilog, would look like this:
-\begin{lstlisting}[caption={Half Adder Verilog Code}, label={Half Adder Verilog}, style=Verilog]
+\newline
+And, since this documentation isn't explaining Verilog, and its syntax, the above schematic would convert to look like the following verilog code:
+\begin{lstlisting}[caption={Half Adder with 2 input bits, and outputs, sum and carry, as explained}, label={Half Adder Verilog}, style=Verilog]
 module half_adder(
         input Bit1, Bit2,
         output Sum, Carry
@@ -471,16 +481,21 @@ module half_adder(
 endmodule
 \end{lstlisting}
 
+
 \subsection{Part 1B: The Full Adder}
 \qquad
-Now, we got a problem... What if we have a carry in from another adder, or say just a previous bit addition? Well, we could just chain the half adders! And get the following schematic, and Verilog code!
+Now, currently we simply have a half adder. But, what if we want to take into account the carry from another addition before it, for example if we are adding the numbers 0 and 1 with an input carry of 1. Well, with our half adder that we made above, we only get a carry out, and can't exactly input a carry in. Therefore, wouldn't we need to take into account 3 inputs, and not just 2?
+
+Now, how would we actually construct this mystical "ultimate adder" (or more commonly known as the full adder)? Well, again, let's think on it. What exactly happens when given an input carry into the addition above? Well, it'd be treated simply as a three way addition of 1 + 1 + 0. And, when broken down even further, wouldn't that just simply be 2 addition operations, of which don't necessarily need anything but the half adder we designed above? Which, when chained together, is the addition of the carry input and the first bit, then of that result to the second bit.
+
+But what of the carry out signal? Well, that would just simply only be true if and only if at least one of those additions produced a carry in the first place. Therefore, we can derive the schematic below:
 \begin{figure}[!htbp]
     \centering
-    \caption{A Full Adder as described in the paragraph above}
+    \caption{A Full Adder with 2 half adders chained together, alongside an or gate to determine if a carry is to outputted}
     \includegraphics[width=0.75\textwidth]{pictures/part1/full_adder.png}
     \label{Full Adder}
-\end{figure}
-\begin{lstlisting}[caption={Full Adder Verilog Code}, label={Full Adder Verilog}, style=Verilog]
+\end{figure}\newline
+\begin{lstlisting}[caption={Verilog code of the Full Adder schematic above}, label={Full Adder Verilog}, style=Verilog]
 module full_adder(
         input A, B, CarryIN,
         output Sum, CarryOUT
@@ -496,10 +511,11 @@ module full_adder(
 endmodule
 \end{lstlisting}
 
-\subsection{Part 1C: Chaining Adders Together}
+
+\subsection{Part 1C: Chaining Adders via Ripple Carry Adders}
 \qquad And now we get to a fun part, a part where we get to chain the adders together into 2 bit adders, and 4 bit adders, etc etc until we get to a 32 bit adder. To do this, though, I shall be taking it in the approach that, for now, it will be made up of two 16 bit adders, of which is made up of two 8 bit adders, and so on. I'll only be showing the code for the 2 bit adder though, as after that it is the same structure with different names.\\
 
-Therefore, how in the world do we chain the two bits together into a result that lets you add two 2 bit numbers together? Well, let's think about it, we have 2 bits in an array, number 1, of which is two bits long, and number 2, of which is also two bits long. Woouldn't we have to add the least significant bit first (of which is, if you didn't know, the right-most bit), and then output the result to the output bit, as well as the carry out to the carry in of the bit to the left of it? So, let's try that out in with the following verilog code, and guess what it's correct:\\
+Therefore, how in the world do we chain the two bits together into a result that lets you add two 2 bit numbers together? Well, let's think about it, we have 2 bits in an array, number 1, of which is two bits long, and number 2, of which is also two bits long. Wouldn't we have to add the least significant bit first (of which is, if you didn't know, the right-most bit), and then output the result to the output bit, as well as the carry out to the carry in of the bit to the left of it? So, let's try that out in with the following verilog code, and guess what it's correct:\newpage
 \begin{lstlisting}[caption={2 Bit Adder Verilog Code}, label={2 Bit Adder Verilog}, style=Verilog]
 module two_bit_adder(
         input[1:0] A, B,
@@ -516,15 +532,15 @@ module two_bit_adder(
 endmodule
 \end{lstlisting}
 
-Of which generates the following schematic:
+Which generates the following schematic:
 \begin{figure}[!htbp]
     \centering
     \caption{2 Bit Adder as designed above}
     \includegraphics[width=0.75\textwidth]{pictures/part1/two_bit_adder.png}
     \label{2 Bit Adder}
-\end{figure}\newpage
+\end{figure}
 
-And now, to just spoil the fun for you, I'll just tell you that, guess what, it's the exact same thing for every addition to it, from 4 bits to 32 bits to even 128 bits if you wanted. And so, I'll just show you the 32 bit encapsulation, and to find the submodules in it head to the code proper in sources...
+And now, to just spoil the fun for you, I'll just tell you that, guess what, it's the exact same thing for every addition to it, from 4 bits to 32 bits to even 128 bits if you wanted. And so, I'll just show you the 32 bit encapsulation, and to find the submodules in it head to the code proper in sources...\newpage
 \begin{lstlisting}[caption={32 Bit Adder Verilog Code}, label={32 Bit Adder Verilog}, style=Verilog]
 module thirtytwo_bit_adder(
         input[31:0] A, B,
@@ -541,13 +557,20 @@ module thirtytwo_bit_adder(
 endmodule
 \end{lstlisting}
 
-Of which generates the following schematic:
+And generates the following schematic:
 \begin{figure}[!htbp]
     \centering
     \caption{32 Bit Adder as designed above}
     \includegraphics[width=0.75\textwidth]{pictures/part1/thirtytwo_bit_adder.png}
     \label{32 Bit Adder}
-\end{figure}
+\end{figure}\newline
+Now, you may be wondering, why in the world do we even need a 32-bit adder in the firstplace? And, that's quite simple. We need it due to the fact that the entire system is meant to be a 32-bit processor, of which takes in 32 bits of information, then modulate it with shifting and additions and subtractions, and then outputs a 32 bit result, either to be stored or to be placed onto the next instruction that it is told to do.
+
+
+
+\newpage
+\section{The Arithmetic Logic Unit}
+\qquad Now that we have a basic 32 bit adder designed, 
 
 
 
